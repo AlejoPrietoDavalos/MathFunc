@@ -53,7 +53,9 @@ def Suma_Riemann(a, b, n):
     return Suma_Inferior, Suma_Superior, Xi, Alt_Inf_i, Alt_Sup_i    # La suma inferior, superior de Riemann y la partición.
 
 
-def Grafico_Suma_Riemann(a, b, n, k, Suma_Inferior, Suma_Superior, Xi, Alt_Inf_i, Alt_Sup_i, hayLineas):
+def Grafico_Suma_Riemann(a, b, n, k, hayLineas):
+    Suma_Inferior, Suma_Superior, Xi, Alt_Inf_i, Alt_Sup_i = Suma_Riemann(a, b, n)
+
     x = np.linspace(a-k, b+k, 1000)
     y = f(x)
     dx = (b-a)/n
@@ -82,6 +84,27 @@ def Grafico_Suma_Riemann(a, b, n, k, Suma_Inferior, Suma_Superior, Xi, Alt_Inf_i
     plt.show()
 
 
+# Esto es para ver como se acercan la suma Sup e Inf cuando n-->infinito.
+def SumasRiemann_nInfinito(a, b, n_maximo):
+    Inf_n = []
+    Sup_n = []
+    Num_n = []
+
+    for n in range(1, n_maximo+1):
+        Suma_Inf, Suma_Sup, _,_,_ = Suma_Riemann(a, b, n)
+        Inf_n.append(Suma_Inf)
+        Sup_n.append(Suma_Sup)
+        Num_n.append(n)
+
+    plt.figure(figsize=[8,8], dpi=100)
+    plt.plot(Num_n, Inf_n, ".", ms=5, color="orange")
+    plt.plot(Num_n, Sup_n, ".", ms=5, color="crimson")
+    plt.title(f"Acá graficamos Suma Inf y Sup en función de n.\n Con n={n_maximo}, SumaInf={round(Inf_n[-1],3)}, SumaSup={round(Sup_n[-1],3)}")
+    plt.xlabel("Valor de n")
+    plt.ylabel("Valor de la suma Inf y Sup de Riemann")
+    plt.show()
+
+
 def f(x):
     ecuation = np.exp(np.cos(x))*np.log(x)      #En este renglón escribir la ecuación de la función que le queremos calcular el área.
     return ecuation
@@ -91,135 +114,36 @@ if __name__ == "__main__":
     #----------Hay que definir el intervalo [a,b] y cuantas "n" particiones queremos----------
     a = 1
     b = 20
-    n = 80
+    
+    # Va a hacer el gráfico por cada número de intervalos que le pasemos.
+    # Si solo queremos un intervalo podemos simplemente ponerlo asi [50].
+    N_Intervalos = [10, 20, 30, 40, 50, 100]
+    
     # True --> Queremos que grafique las Sumas de Riemann. False --> Solo grafica la función.
     hayRiemann = True
+    
     # True --> Los intervalos tienen líneas. NOTA: Si el número de n es muy grande, todas las líneas forman una mancha negra.
     # False --> Si no graficamos las líneas, conviene si n es grande. Con n chiquito dejalo en True.
     hayLineas = True
+
     # IMPORTANTE, SI CAMBIAS EL VALOR DE K
     # Es para que el gráfico se vea bien, k es la distancia excedente que se grafica la función en relación a las Sumas de Riemann.
     # Es decir, las Sumas de Riemann se granfican entre [a,b] y la función [a-k,b+k]
     k = 0.5
 
-    
-    if hayRiemann:
-        Suma_Inferior, Suma_Superior, Xi, Alt_Inf_i, Alt_Sup_i = Suma_Riemann(a, b, n)
-        Grafico_Suma_Riemann(a, b, n, k, Suma_Inferior, Suma_Superior, Xi, Alt_Inf_i, Alt_Sup_i, hayLineas)
-    else:
-        Grafico_Funcion(a, b, k)
-
-
-
-
-
-
-    #####################################################
-    #Esto es para Graficar las sumas de Riemann varias veces con n={1,4,6,10} y despues n aumenta de 10 en 10, cant_rep veces.
-    '''
-    
-    n=1
-    cant_rep=20
-    Lineas=False
-
-    for j in range(4):
-        if j!=0:
-            n=n+3
-        Suma=Suma_Riemann(a,b,n)
-        Grafico_Suma_Riemann(a,b,n,k,Suma[0],Suma[1],Suma[2],Suma[3],Suma[4],Con_o_Sin_Riemann,Lineas)
-
-
-    for r in range(cant_rep):
-        
-        n=n+10
-        Suma=Suma_Riemann(a,b,n)
-        Grafico_Suma_Riemann(a,b,n,k,Suma[0],Suma[1],Suma[2],Suma[3],Suma[4],Con_o_Sin_Riemann,Lineas)
-    '''
-
-
-
-
-    ####################################################
-    #Esto es para ver como se acercan la suma Sup e Inf cuando n-->infinito.
-    '''
-    a_2=0
-    b_2=3
-    n_2=3
-    Inf_n=[]
-    Sup_n=[]
-    num_n=[]
-
-
-    Cant_n=998      #Aca le digo cuantas sumas de Riemann tiene que hacer.
-
-    for i in range(Cant_n):
-        if i!=0:
-            n_2=n_2+1
-        Suma_2=Suma_Riemann(a_2,b_2,n_2)
-        Inf_n.append(Suma_2[0])
-        Sup_n.append(Suma_2[1])
-        num_n.append(n_2)
-
-    plt.figure(figsize=[8,8])
-    plt.plot(num_n,Inf_n,".",ms=5,color="orange")
-    plt.plot(num_n,Sup_n,".",ms=5,color="crimson")
-    plt.title("Acá graficamos Suma Inf y Sup en función de n")
-    plt.xlabel("Valor de n")
-    plt.ylabel("Valor de la suma Inf y Sup de Riemann")
-    plt.show()
-    '''
-
-
+    # Grafico tendencia de Suma Superior e Inferior de Riemann cuando n--->infinito.
+    hacerGrafTendenciaSumas = True
+    # Va a calcular la Suma inf y sup para n={1,2,3,....,n_maximo} y va a graficar
+    # ambos para que se vea la tendencia de ambas al valor del área "REAL".
+    # No te zarpes con este número, por que sinó va a tardar mucho en procesarlo.
+    n_maximo = 500
     
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    '''
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-
-
-    rect=pat.Rectangle( (-200, -100) , 400 , 200 , color='green')
-    ax.add_patch(rect)
-
-    plt.xlim([-300, 300])
-    plt.ylim([-300, 300])
-
-    plt.show()
-    '''
-
-
+    
+    for n in N_Intervalos:
+        if hayRiemann:
+            Grafico_Suma_Riemann(a, b, n, k, hayLineas)
+        else:
+            Grafico_Funcion(a, b, k)
+    
+    SumasRiemann_nInfinito(a, b, n_maximo)
