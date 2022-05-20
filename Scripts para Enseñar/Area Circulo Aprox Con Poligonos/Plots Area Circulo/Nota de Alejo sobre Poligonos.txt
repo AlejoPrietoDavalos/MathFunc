@@ -1,0 +1,9 @@
+Noten que si aumentamos el número de n, el polígono encerrado en la circunferencia 
+se parece cada vez mas a ésta. En el límite con n-->inf, es prácticamente una circunferencia.
+Asi es como aproximaban el valor de PI antes los griegos.
+
+Acá calculé el area del polígono, que es justo PI, por que es una circunferencia de radio R=1.
+Entonces...
+
+A = pi*r^2   pero r=1.
+A = pi

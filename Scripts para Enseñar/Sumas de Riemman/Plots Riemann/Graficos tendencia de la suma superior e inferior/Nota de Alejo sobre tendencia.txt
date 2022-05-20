@@ -1,0 +1,2 @@
+Aca se ve la tendencia de la suma superior y la inferior a un valor concreto cuando aumentamos el número de n.
+Parecen converger a una asíntota horizontal que es el valor del "Área real".
