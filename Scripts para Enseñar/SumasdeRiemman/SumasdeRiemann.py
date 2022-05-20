@@ -145,5 +145,5 @@ if __name__ == "__main__":
             Grafico_Suma_Riemann(a, b, n, k, hayLineas)
         else:
             Grafico_Funcion(a, b, k)
-    
-    SumasRiemann_nInfinito(a, b, n_maximo)
+    if hacerGrafTendenciaSumas:
+        SumasRiemann_nInfinito(a, b, n_maximo)
