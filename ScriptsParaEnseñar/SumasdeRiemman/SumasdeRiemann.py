@@ -15,17 +15,17 @@ def Grafico_Funcion(a, b, k, ColorFunc="black", Title="Gráfico de la Función",
 
 
 # Hace una partición desde [a,b] con "n" intervalos de ancho "(b-a)/n". Devuelve una lista con los valores de los Xi.
-def PartirIntervalo(a,b,n,dx):
+def PartirIntervalo(a,b,n):
+    dx = (b-a)/n
     Xi = [a+i*dx for i in range(n)]
     Xi.append(b)
-    return Xi
+    return Xi, dx
 
 
 # Acá hace la Suma Inferior y Superior de Riemann y devuelve 2 numeros con el valor de dichas sumas.
 # También devuelve una lista con las coordenadas Xi de la partición y otras 2 listas con las alturas de los rectángulos de las particiones.
 def Suma_Riemann(a, b, n):
-    dx = (b-a)/n
-    Xi = PartirIntervalo(a, b, n, dx)
+    Xi,dx = PartirIntervalo(a, b, n)
     Alt_Inf_i = []        #Acá voy a almacenar la altura del rectángulo para la posición i, de la suma inferior.
     Alt_Sup_i = []        #Lo mismo pero en la suma superior.
     Suma_Inferior = 0
