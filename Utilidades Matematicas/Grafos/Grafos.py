@@ -5,7 +5,7 @@ o mejor manera de hacerlo.
 ----------NOTA IMPORTANTE----------
 
 Enunciado: Tenemos un conjunto de vértices y aristas formando un grafo.
-Tenemos que ir desde el vértice v1 al vértice B, con el menor número
+Tenemos que ir desde el vértice v1 al vértice v2, con el menor número
 de pasos posible.
 
 Podemos usar la matriz de adyacencia "M_Ady", es una matriz de KxK, siendo K
@@ -29,32 +29,59 @@ la trayectoria mas "eficiente".'''
 import numpy as np
 
 class Grafo():
-    def __init__(self, CantVertices):
+    def __init__(self, CantVertices:int):
         self.CantVertices = CantVertices
-        self.Vertices = []                         # Lista con todos los objetos de tipo Vertice.
+        self.Vertices = []                                                      # Lista con todos los objetos de tipo Vertice.
 
-        self.M_Ady = np.zeros((self.CantVertices,self.CantVertices),int)      # Matriz de adyacencia.
+        self.M_Ady = np.zeros((self.CantVertices,self.CantVertices),int)        # Matriz de adyacencia.
 
-    def CrearVertice(self, Vertice_Obj, VerticesAdyacentes):
-        self.Vertices.append(Vertice_Obj)           # Agregamos este objeto a la lista de Nodos del grafo.
+    def CrearVertices(self, ListadoVerticesAdyacentes:list):
+        """Recibe como parámetro el listado con los listados de vértices a los cuales es adyacente cada uno
+        de los vértices del grafo, de forma ordenada, es decir, el primer listado corresponde al grafo con ID=0, etc.. 
+        Crea los objetos de tipo vértice que pertenecen al grafo.
+        
+        Args:
+            ListadoVerticesAdyacentes (list): Listado que contiene las listas con los vértices a los cuales es adyacente cada uno de los vértices."""
+        for V_Ady in ListadoVerticesAdyacentes:
+            Vertice(self, V_Ady)
+
+    def AgregarVerticeGrafo(self, Vertice_Obj:object, V_Ady:list):
+        """Agrega el vértice previamente creado al grafo. Ésto modifica la matriz de adyacencia
+        y lo agrega a la lista de vértices en el grafo. Cada vértice tiene un identificador único
+        que coincide con la posición del vértice en el array.
+
+        Args:
+            Vertice_Obj (Vertice Object): El objeto de tipo Vertice.
+            VerticesAdyacentes (list): Listado con el identificador de cada vértice al cual éste es adyacente."""
+        self.Vertices.append(Vertice_Obj)                                       # Agregamos este objeto a la lista de Nodos del grafo.
         indice_NuevoVertice = len(self.Vertices)-1
 
-        for V_Ady in VerticesAdyacentes:
+        for V_Ady in V_Ady:
             self.M_Ady[V_Ady][indice_NuevoVertice] = self.M_Ady[indice_NuevoVertice][V_Ady] = 1
 
-    def N_PasosMin(self, v1, v2):               # Devuelve el número de pasos que le toma ir del vértice v1 a v2.
+    def N_PasosMin(self, v1:int, v2:int):
+        """Recibe como parámetro el ID de cada vértice y devuelve el número de pasos que le toma ir del vértice v1 a v2.
+        
+        Args:
+            v1 (int): Número de ID del primer vértice.
+            v2 (int): Número de ID del segundo vértice.
+        Return:
+            Devuelve el número de pasos que le toma ir de v1 a v2."""
         encontrePasosMin = False
         matriz = self.M_Ady
+        PotMatriz = 1           # Esta es la potencia de la matriz, es lo que necesito saber.
 
         while not(encontrePasosMin):
             if matriz[v1][v2]!=0:
                 encontrePasosMin = True
-                return matriz[v1][v2]
             else:
                 matriz = np.dot(matriz, self.M_Ady)
+                PotMatriz += 1
+        
+        return PotMatriz
 
     def CaminoMinimo(self, v1, v2):
-        CaminoMinimo = [v1]                     # Arranco siempre desde v1.
+        CaminoMinimo = [v1]                                                     # Arranco siempre desde v1.
         pos = v1
         dist_pos_v2 = self.N_PasosMin(pos, v2)
 
@@ -76,20 +103,22 @@ class Grafo():
 
 class Vertice():
     def __init__(self, grafo, V_Ady):
+
         self.grafo = grafo
-        self.grafo.CrearVertice(self, V_Ady)
+        self.ID_Vertice = len(self.grafo.Vertices)   # El primer vertice es el número 0, el segundo será 1, etc..
+        self.grafo.AgregarVerticeGrafo(self, V_Ady)
+        
 
-        self.Num_Vertice = len(self.grafo.Vertices)   # El primer vertice es el número 0, el segundo será 1, etc..
         
         
         
 
 
 
-grafo = Grafo(4)
-Vertice(grafo, [1,2])
-Vertice(grafo, [0,3])
-Vertice(grafo, [0,3])
-Vertice(grafo, [1,2])
-Vertice(grafo, [1,2])
+grafo = Grafo(5)
+ListadoVerticesAdyacentes = [[1,2], [0,3], [0,3], [1,2], [1,2]]
+grafo.CrearVertices(ListadoVerticesAdyacentes)
 
+
+for v in grafo.Vertices:
+    print(v.ID_Vertice)
